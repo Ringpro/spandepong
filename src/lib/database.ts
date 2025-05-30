@@ -89,53 +89,55 @@ export async function getTournaments(): Promise<Tournament[]> {
 }
 
 export async function getTournament(id: string) {
-  const result = await client.query(`
-    select Tournament {
-      id,
-      name,
-      description,
-      status,
-      created_at,
-      max_players,
-      players := .<tournament[is TournamentRegistration].player {
+  const result = await safeQuery(async () => {
+    return await client.query(`
+      select Tournament {
         id,
         name,
-        email,
-        created_at
-      },
-      rounds := .<tournament[is Round] {
-        id,
-        round_number,
+        description,
         status,
         created_at,
-        matches := .<round[is GameMatch] {
+        max_players,
+        players := .<tournament[is TournamentRegistration].player {
           id,
-          team1: { 
-            id, 
-            name,
-            members: {
-              id,
-              name
-            }
-          },
-          team2: { 
-            id, 
-            name,
-            members: {
-              id,
-              name
-            }
-          },
-          team1_score,
-          team2_score,
+          name,
+          email,
+          created_at
+        },
+        rounds := .<tournament[is Round] {
+          id,
+          round_number,
           status,
-          winner: { id, name },
           created_at,
-          finished_at
+          matches := .<round[is GameMatch] {
+            id,
+            team1: { 
+              id, 
+              name,
+              members: {
+                id,
+                name
+              }
+            },
+            team2: { 
+              id, 
+              name,
+              members: {
+                id,
+                name
+              }
+            },
+            team1_score,
+            team2_score,
+            status,
+            winner: { id, name },
+            created_at,
+            finished_at
+          }
         }
-      }
-    } filter .id = <uuid>$id
-  `, { id });
+      } filter .id = <uuid>$id
+    `, { id });
+  }, []);
   
   return result[0] || null;
 }
