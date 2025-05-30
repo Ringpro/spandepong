@@ -117,11 +117,10 @@ export default function NewTournamentPage() {
             </p>
           </div>
 
-          <div className="flex gap-4 pt-6">
-            <button
+          <div className="flex gap-4 pt-6">            <button
               type="submit"
               disabled={isLoading || !formData.name.trim()}
-              className="flex-1 btn-primary py-2 px-4 rounded-md hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+              className="flex-1 btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLoading ? (
                 'Creating...'

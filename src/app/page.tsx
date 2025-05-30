@@ -29,14 +29,14 @@ export default async function HomePage() {
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Link
             href="/tournaments/new"
-            className="inline-flex items-center px-6 py-3 btn-primary text-base font-medium rounded-md hover:opacity-90"
+            className="btn-primary text-base font-medium"
           >
             <Plus className="w-5 h-5 mr-2" />
             Create Tournament
           </Link>
           <Link
             href="/players"
-            className="inline-flex items-center px-6 py-3 btn-secondary text-base font-medium rounded-md hover:opacity-90"
+            className="btn-secondary text-base font-medium"
           >
             <Users className="w-5 h-5 mr-2" />
             Manage Players
@@ -92,7 +92,7 @@ export default async function HomePage() {
             </p>
             <Link
               href="/tournaments/new"
-              className="inline-flex items-center px-4 py-2 btn-primary text-sm font-medium rounded-md hover:opacity-90"
+              className="btn-primary text-sm font-medium"
             >
               <Plus className="w-4 h-4 mr-2" />
               Create Tournament

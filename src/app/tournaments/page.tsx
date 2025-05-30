@@ -33,10 +33,9 @@ export default async function TournamentsPage() {
             <p className="text-muted mt-2">
               Manage and view all Spandepong tournaments
             </p>
-          </div>
-          <Link
+          </div>          <Link
             href="/tournaments/new"
-            className="inline-flex items-center px-4 py-2 btn-primary rounded-md hover:opacity-90"
+            className="btn-primary"
           >
             <Plus className="w-4 h-4 mr-2" />
             New Tournament
@@ -102,10 +101,9 @@ export default async function TournamentsPage() {
           </h3>
           <p className="text-muted mb-4">
             Create your first Spandepong tournament to get started!
-          </p>
-          <Link
+          </p>          <Link
             href="/tournaments/new"
-            className="inline-flex items-center px-4 py-2 btn-primary rounded-md hover:opacity-90"
+            className="btn-primary"
           >
             <Plus className="w-4 h-4 mr-2" />
             Create Tournament
