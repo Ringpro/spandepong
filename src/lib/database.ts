@@ -65,7 +65,7 @@ export async function getTournaments(): Promise<Tournament[]> {
 }
 
 export async function getTournament(id: string) {
-  return await client.queryRequiredSingle(`
+  const result = await client.query(`
     select Tournament {
       id,
       name,
@@ -75,7 +75,9 @@ export async function getTournament(id: string) {
       max_players,
       players := .<tournament[is TournamentRegistration].player {
         id,
-        name
+        name,
+        email,
+        created_at
       },
       rounds := .<tournament[is Round] {
         id,
@@ -84,18 +86,34 @@ export async function getTournament(id: string) {
         created_at,
         matches := .<round[is GameMatch] {
           id,
-          team1: { id, name, members: { id, name } },
-          team2: { id, name, members: { id, name } },
+          team1: { 
+            id, 
+            name,
+            members: {
+              id,
+              name
+            }
+          },
+          team2: { 
+            id, 
+            name,
+            members: {
+              id,
+              name
+            }
+          },
           team1_score,
           team2_score,
           status,
           winner: { id, name },
-          started_at,
+          created_at,
           finished_at
         }
       }
     } filter .id = <uuid>$id
   `, { id });
+  
+  return result[0] || null;
 }
 
 // Tournament registration
@@ -134,7 +152,21 @@ export async function createRoundWithMatches(
   roundNumber: number, 
   teams: Array<{ team1: [string, string], team2: [string, string] }>
 ) {
-  return await client.transaction(async (tx) => {
+  return await client.transaction(async (tx) => {    // Get tournament players if no teams provided (generate solo shuffle)
+    let teamPairs = teams;
+    if (teams.length === 0) {
+      const tournament = await tx.queryRequiredSingle(`
+        select Tournament {
+          players := .<tournament[is TournamentRegistration].player {
+            id
+          }
+        } filter .id = <uuid>$tournamentId
+      `, { tournamentId });
+      
+      const playerIds = (tournament as any).players.map((p: any) => p.id);
+      teamPairs = generateSoloShuffleTeams(playerIds);
+    }
+
     // Create the round
     const round = await tx.queryRequiredSingle(`
       insert Round {
@@ -145,7 +177,8 @@ export async function createRoundWithMatches(
 
     // Create teams and matches for this round
     const matches = [];
-    for (const teamPair of teams) {      // Create team 1
+    for (const teamPair of teamPairs) {
+      // Create team 1
       const team1 = await tx.queryRequiredSingle(`
         insert Team {
           name := 'Team ' ++ (select Player filter .id = <uuid>$player1Id).name ++ ' & ' ++ (select Player filter .id = <uuid>$player2Id).name,
