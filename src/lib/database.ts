@@ -314,8 +314,11 @@ export async function getTournamentLeaderboard(tournamentId: string) {
         id,
         name,
         tournament_matches := count(.<player[is TeamMembership] filter .game_match.tournament.id = <uuid>$tournamentId),
-        tournament_wins := count(.<player[is TeamMembership] filter .game_match.tournament.id = <uuid>$tournamentId and .game_match.winner = .team),
-        tournament_win_rate := count(.<player[is TeamMembership] filter .game_match.tournament.id = <uuid>$tournamentId and .game_match.winner = .team) / math::max(count(.<player[is TeamMembership] filter .game_match.tournament.id = <uuid>$tournamentId), 1)
+        tournament_wins := count(.<player[is TeamMembership] filter .game_match.tournament.id = <uuid>$tournamentId and .game_match.winner = .team),        tournament_win_rate := (
+          count(.<player[is TeamMembership] filter .game_match.tournament.id = <uuid>$tournamentId and .game_match.winner = .team) 
+          / 
+          (count(.<player[is TeamMembership] filter .game_match.tournament.id = <uuid>$tournamentId) if count(.<player[is TeamMembership] filter .game_match.tournament.id = <uuid>$tournamentId) > 0 else 1)
+        )
       } order by .tournament_wins desc then .name
     `, { tournamentId });
   }, []);

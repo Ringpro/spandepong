@@ -17,18 +17,16 @@ export default async function TournamentDetailPage({ params }: PageProps) {
       getTournament(tournamentId),
       getPlayers(),
       getTournamentLeaderboard(tournamentId)
-    ]);
-
-    if (!tournament) {
+    ]);    if (!tournament) {
       return (
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">Tournament Not Found</h1>
-          <Link href="/" className="text-blue-600 hover:text-blue-800">
+          <h1 className="text-2xl font-bold mb-4">Tournament Not Found</h1>
+          <Link href="/" className="btn-primary">
             Return to Home
           </Link>
         </div>
       );
-    }    return (
+    }return (
       <TournamentClient 
         tournament={tournament as Tournament}
         allPlayers={allPlayers as Player[]}
@@ -37,12 +35,11 @@ export default async function TournamentDetailPage({ params }: PageProps) {
       />
     );
   } catch (error) {
-    console.error('Failed to load tournament data:', error);
-    return (
+    console.error('Failed to load tournament data:', error);    return (
       <div className="text-center">
-        <h1 className="text-2xl font-bold text-gray-900 mb-4">Error Loading Tournament</h1>
-        <p className="text-gray-600 mb-4">Failed to load tournament data.</p>
-        <Link href="/" className="text-blue-600 hover:text-blue-800">
+        <h1 className="text-2xl font-bold mb-4">Error Loading Tournament</h1>
+        <p className="text-muted mb-4">Failed to load tournament data.</p>
+        <Link href="/" className="btn-primary">
           Return to Home
         </Link>
       </div>
