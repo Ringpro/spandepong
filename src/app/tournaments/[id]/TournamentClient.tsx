@@ -110,24 +110,23 @@ export default function TournamentClient({
           <ArrowLeft className="w-4 h-4 mr-2" />
           Back to Home
         </Link>
-        
-        <div className="flex justify-between items-start">
+          <div className="flex justify-between items-start">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">{tournament.name}</h1>
+            <h1 className="text-3xl font-bold text-card-foreground">{tournament.name}</h1>
             {tournament.description && (
-              <p className="text-gray-600 mt-2">{tournament.description}</p>
+              <p className="text-muted mt-2">{tournament.description}</p>
             )}
             <div className="flex items-center gap-4 mt-4">
               <span className={`px-3 py-1 text-sm font-medium rounded-full ${
                 tournament.status === 'active'
-                  ? 'bg-green-100 text-green-800'
+                  ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300'
                   : tournament.status === 'finished'
-                  ? 'bg-gray-100 text-gray-800'
-                  : 'bg-blue-100 text-blue-800'
+                  ? 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
+                  : 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300'
               }`}>
                 {tournament.status}
               </span>
-              <span className="text-sm text-gray-500">
+              <span className="text-sm text-muted">
                 Created {formatDate(tournament.created_at)}
               </span>
             </div>
@@ -135,18 +134,16 @@ export default function TournamentClient({
           
           <div className="flex gap-2">
             {tournament.status === 'created' && (
-              <>
-                <button
+              <>                <button
                   onClick={() => setShowAddPlayers(true)}
-                  className="inline-flex items-center px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50"
+                  className="btn-secondary"
                 >
                   <Plus className="w-4 h-4 mr-2" />
                   Add Players
-                </button>
-                <button
+                </button>                <button
                   onClick={handleStartTournament}
                   disabled={!tournament.players || tournament.players.length < 4}
-                  className="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <Play className="w-4 h-4 mr-2" />
                   Start Tournament
@@ -154,10 +151,9 @@ export default function TournamentClient({
               </>
             )}
             
-            {tournament.status === 'active' && (
-              <button
+            {tournament.status === 'active' && (              <button
                 onClick={handleCreateNextRound}
-                className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                className="btn-primary"
               >
                 <Shuffle className="w-4 h-4 mr-2" />
                 Create Next Round
@@ -165,55 +161,50 @@ export default function TournamentClient({
             )}
           </div>
         </div>
-      </div>
-
-      {/* Stats Cards */}
+      </div>      {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-        <div className="bg-white p-4 rounded-lg shadow">
+        <div className="card p-4">
           <div className="flex items-center">
             <Users className="w-6 h-6 text-blue-500 mr-2" />
             <div>
-              <p className="text-sm text-gray-600">Players</p>
-              <p className="text-xl font-bold">{tournament.players?.length || 0}/{tournament.max_players}</p>
+              <p className="text-sm text-muted">Players</p>
+              <p className="text-xl font-bold text-card-foreground">{tournament.players?.length || 0}/{tournament.max_players}</p>
             </div>
           </div>
         </div>
         
-        <div className="bg-white p-4 rounded-lg shadow">
+        <div className="card p-4">
           <div className="flex items-center">
             <Target className="w-6 h-6 text-green-500 mr-2" />
             <div>
-              <p className="text-sm text-gray-600">Rounds</p>
-              <p className="text-xl font-bold">{tournament.rounds?.length || 0}</p>
+              <p className="text-sm text-muted">Rounds</p>
+              <p className="text-xl font-bold text-card-foreground">{tournament.rounds?.length || 0}</p>
             </div>
           </div>
         </div>
         
-        <div className="bg-white p-4 rounded-lg shadow">
+        <div className="card p-4">
           <div className="flex items-center">
             <Trophy className="w-6 h-6 text-yellow-500 mr-2" />
             <div>
-              <p className="text-sm text-gray-600">Matches</p>
-              <p className="text-xl font-bold">{tournament.rounds?.reduce((sum, round) => sum + round.matches.length, 0) || 0}</p>
+              <p className="text-sm text-muted">Matches</p>
+              <p className="text-xl font-bold text-card-foreground">{tournament.rounds?.reduce((sum, round) => sum + round.matches.length, 0) || 0}</p>
             </div>
           </div>
         </div>
-        
-        <div className="bg-white p-4 rounded-lg shadow">
+          <div className="card p-4">
           <div className="flex items-center">
             <Target className="w-6 h-6 text-purple-500 mr-2" />
             <div>
-              <p className="text-sm text-gray-600">Completed</p>
-              <p className="text-xl font-bold">
+              <p className="text-sm text-muted">Completed</p>
+              <p className="text-xl font-bold text-card-foreground">
                 {tournament.rounds?.reduce((sum, round) => sum + round.matches.filter(m => m.status === 'completed').length, 0) || 0}
               </p>
             </div>
           </div>
         </div>
-      </div>
-
-      {/* Tabs */}
-      <div className="border-b border-gray-200 mb-6">
+      </div>      {/* Tabs */}
+      <div className="border-b border-default mb-6">
         <nav className="-mb-px flex space-x-8">
           {(['overview', 'matches', 'leaderboard'] as const).map((tab) => (
             <button
@@ -221,34 +212,32 @@ export default function TournamentClient({
               onClick={() => setActiveTab(tab)}
               className={`py-2 px-1 border-b-2 font-medium text-sm ${
                 activeTab === tab
-                  ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  ? 'border-blue-500 text-blue-600 dark:text-blue-400'
+                  : 'border-transparent text-muted hover:text-card-foreground hover:border-default'
               }`}
             >
               {tab.charAt(0).toUpperCase() + tab.slice(1)}
             </button>
           ))}
         </nav>
-      </div>
-
-      {/* Tab Content */}
+      </div>      {/* Tab Content */}
       {activeTab === 'overview' && (
         <div className="space-y-6">
           {/* Players */}
-          <div className="bg-white rounded-lg shadow p-6">
-            <h3 className="text-lg font-semibold mb-4">Players ({tournament.players?.length || 0})</h3>
+          <div className="card p-6">
+            <h3 className="text-lg font-semibold mb-4 text-card-foreground">Players ({tournament.players?.length || 0})</h3>
             {!tournament.players || tournament.players.length === 0 ? (
-              <p className="text-gray-500">No players registered yet.</p>
+              <p className="text-muted">No players registered yet.</p>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {tournament.players.map((player) => (
-                  <div key={player.id} className="flex items-center p-3 border rounded-lg">
-                    <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-3">
-                      <Users className="w-4 h-4 text-blue-600" />
+                  <div key={player.id} className="flex items-center p-3 border-default border rounded-lg">
+                    <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center mr-3">
+                      <Users className="w-4 h-4 text-blue-600 dark:text-blue-400" />
                     </div>
                     <div>
-                      <p className="font-medium">{player.name}</p>
-                      <p className="text-sm text-gray-500">
+                      <p className="font-medium text-card-foreground">{player.name}</p>
+                      <p className="text-sm text-muted">
                         {player.total_matches || 0} matches, {formatWinRate(player.wins || 0, player.total_matches || 0)} win rate
                       </p>
                     </div>
@@ -258,23 +247,23 @@ export default function TournamentClient({
             )}
           </div>
         </div>
-      )}
-
-      {activeTab === 'matches' && (
+      )}      {activeTab === 'matches' && (
         <div className="space-y-6">
           {!tournament.rounds || tournament.rounds.length === 0 ? (
-            <div className="bg-white rounded-lg shadow p-8 text-center">
-              <Target className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">No rounds yet</h3>
-              <p className="text-gray-600">Start the tournament to create the first round!</p>
+            <div className="card p-8 text-center">
+              <Target className="w-12 h-12 text-muted mx-auto mb-4" />
+              <h3 className="text-lg font-medium text-card-foreground mb-2">No rounds yet</h3>
+              <p className="text-muted">Start the tournament to create the first round!</p>
             </div>
           ) : (
             tournament.rounds.map((round) => (
-              <div key={round.id} className="bg-white rounded-lg shadow p-6">
-                <h3 className="text-lg font-semibold mb-4">
+              <div key={round.id} className="card p-6">
+                <h3 className="text-lg font-semibold mb-4 text-card-foreground">
                   Round {round.round_number}
                   <span className={`ml-2 px-2 py-1 text-xs font-medium rounded-full ${
-                    round.status === 'completed' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'
+                    round.status === 'completed' 
+                      ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' 
+                      : 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300'
                   }`}>
                     {round.status}
                   </span>
@@ -292,50 +281,48 @@ export default function TournamentClient({
             ))
           )}
         </div>
-      )}
-
-      {activeTab === 'leaderboard' && (
-        <div className="bg-white rounded-lg shadow">
-          <div className="p-6 border-b">
-            <h3 className="text-lg font-semibold">Tournament Leaderboard</h3>
+      )}      {activeTab === 'leaderboard' && (
+        <div className="card">
+          <div className="p-6 border-b border-default">
+            <h3 className="text-lg font-semibold text-card-foreground">Tournament Leaderboard</h3>
           </div>
           {leaderboard.length === 0 ? (
             <div className="p-8 text-center">
-              <Trophy className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-              <p className="text-gray-600">No matches completed yet.</p>
+              <Trophy className="w-12 h-12 text-muted mx-auto mb-4" />
+              <p className="text-muted">No matches completed yet.</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="min-w-full">
-                <thead className="bg-gray-50">
+                <thead className="bg-gray-50 dark:bg-gray-800">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Rank</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Player</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Matches</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Wins</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Win Rate</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-muted uppercase">Rank</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-muted uppercase">Player</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-muted uppercase">Matches</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-muted uppercase">Wins</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-muted uppercase">Win Rate</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-200">
+                <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
                   {leaderboard.map((player, index) => (
                     <tr key={player.id}>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span className={`inline-flex items-center justify-center w-6 h-6 rounded-full text-sm font-medium ${
-                          index === 0 ? 'bg-yellow-100 text-yellow-800' : 
-                          index === 1 ? 'bg-gray-100 text-gray-800' :
-                          index === 2 ? 'bg-orange-100 text-orange-800' :
-                          'bg-blue-100 text-blue-800'
+                          index === 0 ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300' : 
+                          index === 1 ? 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300' :
+                          index === 2 ? 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-300' :
+                          'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300'
                         }`}>
                           {index + 1}
                         </span>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap font-medium">{player.name}</td>
-                      <td className="px-6 py-4 whitespace-nowrap">{player.tournament_matches}</td>
-                      <td className="px-6 py-4 whitespace-nowrap">{player.tournament_wins}</td>                      <td className="px-6 py-4 whitespace-nowrap">
+                      <td className="px-6 py-4 whitespace-nowrap font-medium text-card-foreground">{player.name}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-card-foreground">{player.tournament_matches}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-card-foreground">{player.tournament_wins}</td>                      <td className="px-6 py-4 whitespace-nowrap">
                         <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
-                          (player.tournament_win_rate || 0) >= 0.7 ? 'bg-green-100 text-green-800' :
-                          (player.tournament_win_rate || 0) >= 0.5 ? 'bg-yellow-100 text-yellow-800' :
-                          'bg-red-100 text-red-800'
+                          (player.tournament_win_rate || 0) >= 0.7 ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' :
+                          (player.tournament_win_rate || 0) >= 0.5 ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300' :
+                          'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300'
                         }`}>
                           {formatWinRate(player.tournament_wins || 0, player.tournament_matches || 0)}
                         </span>
@@ -347,20 +334,18 @@ export default function TournamentClient({
             </div>
           )}
         </div>
-      )}
-
-      {/* Add Players Modal */}
+      )}      {/* Add Players Modal */}
       {showAddPlayers && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg max-w-md w-full p-6">
-            <h3 className="text-lg font-semibold mb-4">Add Players to Tournament</h3>
+          <div className="card max-w-md w-full p-6">
+            <h3 className="text-lg font-semibold mb-4 text-card-foreground">Add Players to Tournament</h3>
             
             {availablePlayers.length === 0 ? (
-              <p className="text-gray-600 mb-4">No available players. Create players first.</p>
+              <p className="text-muted mb-4">No available players. Create players first.</p>
             ) : (
               <div className="space-y-2 mb-4 max-h-60 overflow-y-auto">
                 {availablePlayers.map((player) => (
-                  <label key={player.id} className="flex items-center p-2 hover:bg-gray-50 rounded">
+                  <label key={player.id} className="flex items-center p-2 hover:bg-gray-50 dark:hover:bg-gray-800 rounded">
                     <input
                       type="checkbox"
                       checked={selectedPlayers.includes(player.id)}
@@ -373,7 +358,7 @@ export default function TournamentClient({
                       }}
                       className="mr-3"
                     />
-                    <span>{player.name}</span>
+                    <span className="text-card-foreground">{player.name}</span>
                   </label>
                 ))}
               </div>
@@ -383,7 +368,7 @@ export default function TournamentClient({
               <button
                 onClick={handleAddPlayers}
                 disabled={selectedPlayers.length === 0}
-                className="flex-1 bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 disabled:opacity-50"
+                className="btn-primary flex-1 disabled:opacity-50"
               >
                 Add Selected Players
               </button>
@@ -392,7 +377,7 @@ export default function TournamentClient({
                   setShowAddPlayers(false);
                   setSelectedPlayers([]);
                 }}
-                className="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50"
+                className="btn-secondary px-4"
               >
                 Cancel
               </button>
@@ -446,12 +431,12 @@ function MatchCard({ match, onScoreUpdate }: MatchCardProps) {
       setIsUpdating(false);
     }
   };
-
   return (
-    <div className="border rounded-lg p-4">
+    <div className="border-default border rounded-lg p-4">
       <div className="flex justify-between items-center mb-4">
-        <div className="flex-1">          <h4 className="font-medium">{match.team1.name}</h4>
-          <p className="text-sm text-gray-500">
+        <div className="flex-1">
+          <h4 className="font-medium text-card-foreground">{match.team1.name}</h4>
+          <p className="text-sm text-muted">
             {match.team1.members.map((m: { id: string; name: string }) => m.name).join(' & ')}
           </p>
         </div>
@@ -464,10 +449,10 @@ function MatchCard({ match, onScoreUpdate }: MatchCardProps) {
               value={team1Score}
               onChange={(e) => setTeam1Score(parseInt(e.target.value) || 0)}
               disabled={match.status === 'completed'}
-              className="w-16 text-center border rounded py-1"
+              className="input w-16 text-center"
             />
           </div>
-          <span className="text-gray-500">vs</span>
+          <span className="text-muted">vs</span>
           <div className="text-center">
             <input
               type="number"
@@ -475,13 +460,14 @@ function MatchCard({ match, onScoreUpdate }: MatchCardProps) {
               value={team2Score}
               onChange={(e) => setTeam2Score(parseInt(e.target.value) || 0)}
               disabled={match.status === 'completed'}
-              className="w-16 text-center border rounded py-1"
+              className="input w-16 text-center"
             />
           </div>
         </div>
-          <div className="flex-1 text-right">
-          <h4 className="font-medium">{match.team2.name}</h4>
-          <p className="text-sm text-gray-500">
+        
+        <div className="flex-1 text-right">
+          <h4 className="font-medium text-card-foreground">{match.team2.name}</h4>
+          <p className="text-sm text-muted">
             {match.team2.members.map((m: { id: string; name: string }) => m.name).join(' & ')}
           </p>
         </div>
@@ -489,7 +475,9 @@ function MatchCard({ match, onScoreUpdate }: MatchCardProps) {
       
       <div className="flex justify-between items-center">
         <span className={`px-2 py-1 text-xs font-medium rounded-full ${
-          match.status === 'completed' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'
+          match.status === 'completed' 
+            ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' 
+            : 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300'
         }`}>
           {match.status}
         </span>
@@ -498,14 +486,14 @@ function MatchCard({ match, onScoreUpdate }: MatchCardProps) {
           <button
             onClick={handleScoreSubmit}
             disabled={isUpdating || (team1Score === 0 && team2Score === 0)}
-            className="px-4 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 disabled:opacity-50"
+            className="btn-primary text-sm disabled:opacity-50"
           >
             {isUpdating ? 'Updating...' : 'Update Score'}
           </button>
         )}
         
         {match.winner && (
-          <span className="text-sm font-medium text-green-600">
+          <span className="text-sm font-medium text-green-600 dark:text-green-400">
             Winner: {match.winner.name}
           </span>
         )}
