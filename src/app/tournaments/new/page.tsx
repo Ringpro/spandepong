@@ -21,9 +21,9 @@ export default function NewTournamentPage() {
         formData.name,
         formData.description || undefined,
         formData.maxPlayers
-      );
+      ) as { id: string };
       
-      router.push(`/tournaments/${(tournament as any).id}`);
+      router.push(`/tournaments/${tournament.id}`);
     } catch (error) {
       console.error('Failed to create tournament:', error);
       alert('Failed to create tournament. Please try again.');

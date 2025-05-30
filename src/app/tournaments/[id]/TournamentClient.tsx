@@ -15,7 +15,7 @@ import type { Tournament, Player } from '@/lib/types';
 interface TournamentClientProps {
   tournament: Tournament;
   allPlayers: Player[];
-  leaderboard: any[];
+  leaderboard: Player[];
   tournamentId: string;
 }
 
@@ -24,9 +24,8 @@ export default function TournamentClient({
   allPlayers, 
   leaderboard: initialLeaderboard,
   tournamentId 
-}: TournamentClientProps) {
-  const [tournament, setTournament] = useState<Tournament>(initialTournament);
-  const [leaderboard, setLeaderboard] = useState<any[]>(initialLeaderboard);
+}: TournamentClientProps) {  const [tournament] = useState<Tournament>(initialTournament);
+  const [leaderboard] = useState<Player[]>(initialLeaderboard);
   const [activeTab, setActiveTab] = useState<'overview' | 'matches' | 'leaderboard'>('overview');
   const [showAddPlayers, setShowAddPlayers] = useState(false);
   const [selectedPlayers, setSelectedPlayers] = useState<string[]>([]);
@@ -332,14 +331,13 @@ export default function TournamentClient({
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap font-medium">{player.name}</td>
                       <td className="px-6 py-4 whitespace-nowrap">{player.tournament_matches}</td>
-                      <td className="px-6 py-4 whitespace-nowrap">{player.tournament_wins}</td>
-                      <td className="px-6 py-4 whitespace-nowrap">
+                      <td className="px-6 py-4 whitespace-nowrap">{player.tournament_wins}</td>                      <td className="px-6 py-4 whitespace-nowrap">
                         <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
-                          player.tournament_win_rate >= 0.7 ? 'bg-green-100 text-green-800' :
-                          player.tournament_win_rate >= 0.5 ? 'bg-yellow-100 text-yellow-800' :
+                          (player.tournament_win_rate || 0) >= 0.7 ? 'bg-green-100 text-green-800' :
+                          (player.tournament_win_rate || 0) >= 0.5 ? 'bg-yellow-100 text-yellow-800' :
                           'bg-red-100 text-red-800'
                         }`}>
-                          {formatWinRate(player.tournament_wins, player.tournament_matches)}
+                          {formatWinRate(player.tournament_wins || 0, player.tournament_matches || 0)}
                         </span>
                       </td>
                     </tr>
@@ -407,7 +405,28 @@ export default function TournamentClient({
 }
 
 // Match Card Component
-function MatchCard({ match, onScoreUpdate }: { match: any, onScoreUpdate: (matchId: string, team1Score: number, team2Score: number, winnerId?: string) => void }) {
+interface MatchCardProps {
+  match: {
+    id: string;
+    team1: { 
+      id: string; 
+      name: string; 
+      members: { id: string; name: string }[]
+    };
+    team2: { 
+      id: string; 
+      name: string; 
+      members: { id: string; name: string }[]
+    };
+    team1_score: number;
+    team2_score: number;
+    status: string;
+    winner?: { id: string; name: string };
+  };
+  onScoreUpdate: (matchId: string, team1Score: number, team2Score: number, winnerId?: string) => void;
+}
+
+function MatchCard({ match, onScoreUpdate }: MatchCardProps) {
   const [team1Score, setTeam1Score] = useState(match.team1_score);
   const [team2Score, setTeam2Score] = useState(match.team2_score);
   const [isUpdating, setIsUpdating] = useState(false);
@@ -431,10 +450,9 @@ function MatchCard({ match, onScoreUpdate }: { match: any, onScoreUpdate: (match
   return (
     <div className="border rounded-lg p-4">
       <div className="flex justify-between items-center mb-4">
-        <div className="flex-1">
-          <h4 className="font-medium">{match.team1.name}</h4>
+        <div className="flex-1">          <h4 className="font-medium">{match.team1.name}</h4>
           <p className="text-sm text-gray-500">
-            {match.team1.members.map((m: any) => m.name).join(' & ')}
+            {match.team1.members.map((m: { id: string; name: string }) => m.name).join(' & ')}
           </p>
         </div>
         
@@ -461,11 +479,10 @@ function MatchCard({ match, onScoreUpdate }: { match: any, onScoreUpdate: (match
             />
           </div>
         </div>
-        
-        <div className="flex-1 text-right">
+          <div className="flex-1 text-right">
           <h4 className="font-medium">{match.team2.name}</h4>
           <p className="text-sm text-gray-500">
-            {match.team2.members.map((m: any) => m.name).join(' & ')}
+            {match.team2.members.map((m: { id: string; name: string }) => m.name).join(' & ')}
           </p>
         </div>
       </div>

@@ -1,5 +1,5 @@
 import { client } from './edgedb';
-import type { Tournament, Player, Round, GameMatch } from './types';
+import type { Tournament, Player } from './types';
 
 // Player operations
 export async function createPlayer(name: string, email?: string) {
@@ -39,13 +39,15 @@ export async function createTournament(
   description?: string, 
   maxPlayers: number = 8
 ) {
-  return await client.query(`
+  const result = await client.query(`
     insert Tournament {
       name := <str>$name,
       description := <optional str>$description,
       max_players := <int16>$maxPlayers
     }
   `, { name, description, maxPlayers });
+  
+  return result[0];
 }
 
 export async function getTournaments(): Promise<Tournament[]> {
@@ -163,7 +165,7 @@ export async function createRoundWithMatches(
         } filter .id = <uuid>$tournamentId
       `, { tournamentId });
       
-      const playerIds = (tournament as any).players.map((p: any) => p.id);
+      const playerIds = (tournament as { players: { id: string }[] }).players.map((p: { id: string }) => p.id);
       teamPairs = generateSoloShuffleTeams(playerIds);
     }
 
@@ -207,12 +209,11 @@ export async function createRoundWithMatches(
           round := (select Round filter .id = <uuid>$roundId),
           team1 := (select Team filter .id = <uuid>$team1Id),
           team2 := (select Team filter .id = <uuid>$team2Id)
-        }
-      `, {
+        }      `, {
         tournamentId,
-        roundId: (round as any).id,
-        team1Id: (team1 as any).id,
-        team2Id: (team2 as any).id
+        roundId: (round as { id: string }).id,
+        team1Id: (team1 as { id: string }).id,
+        team2Id: (team2 as { id: string }).id
       });
 
       // Create team memberships for statistics
@@ -223,12 +224,11 @@ export async function createRoundWithMatches(
             team := (select Team filter .id = <uuid>$team1Id),
             game_match := (select GameMatch filter .id = <uuid>$matchId)
           }
-        )
-      `, {
+        )      `, {
         p1: teamPair.team1[0],
         p2: teamPair.team1[1],
-        team1Id: (team1 as any).id,
-        matchId: (match as any).id
+        team1Id: (team1 as { id: string }).id,
+        matchId: (match as { id: string }).id
       });
 
       await tx.query(`
@@ -238,12 +238,11 @@ export async function createRoundWithMatches(
             team := (select Team filter .id = <uuid>$team2Id),
             game_match := (select GameMatch filter .id = <uuid>$matchId)
           }
-        )
-      `, {
+        )      `, {
         p1: teamPair.team2[0],
         p2: teamPair.team2[1],
-        team2Id: (team2 as any).id,
-        matchId: (match as any).id
+        team2Id: (team2 as { id: string }).id,
+        matchId: (match as { id: string }).id
       });
 
       matches.push(match);
@@ -273,15 +272,15 @@ export async function updateMatchScore(
 }
 
 // Leaderboard and statistics
-export async function getTournamentLeaderboard(tournamentId: string) {
-  return await client.query(`
+export async function getTournamentLeaderboard(tournamentId: string) {  return await client.query(`
     with 
       tournament_players := (select TournamentRegistration filter .tournament.id = <uuid>$tournamentId).player
     select tournament_players {
       id,
       name,
       tournament_matches := count(.<player[is TeamMembership] filter .game_match.tournament.id = <uuid>$tournamentId),
-      tournament_wins := count(.<player[is TeamMembership] filter .game_match.tournament.id = <uuid>$tournamentId and .game_match.winner = .team)
+      tournament_wins := count(.<player[is TeamMembership] filter .game_match.tournament.id = <uuid>$tournamentId and .game_match.winner = .team),
+      tournament_win_rate := count(.<player[is TeamMembership] filter .game_match.tournament.id = <uuid>$tournamentId and .game_match.winner = .team) / math::max(count(.<player[is TeamMembership] filter .game_match.tournament.id = <uuid>$tournamentId), 1)
     } order by .tournament_wins desc then .name
   `, { tournamentId });
 }

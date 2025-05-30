@@ -16,13 +16,13 @@ export function shuffleArray<T>(array: T[]): T[] {
 }
 
 // Generate random teams from a list of players
-export function generateRandomTeams(players: any[]): Array<[any, any]> {
+export function generateRandomTeams<T>(players: T[]): Array<[T, T]> {
   if (players.length % 2 !== 0) {
     throw new Error('Number of players must be even to form teams');
   }
   
   const shuffledPlayers = shuffleArray(players);
-  const teams: Array<[any, any]> = [];
+  const teams: Array<[T, T]> = [];
   
   for (let i = 0; i < shuffledPlayers.length; i += 2) {
     teams.push([shuffledPlayers[i], shuffledPlayers[i + 1]]);

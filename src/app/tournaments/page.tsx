@@ -5,7 +5,7 @@ import { Plus, Trophy, Users, Target, ArrowLeft } from 'lucide-react';
 import type { Tournament } from '@/lib/types';
 
 export default async function TournamentsPage() {
-  const tournaments = await getTournamentsAction();
+  const tournaments = await getTournamentsAction() as Tournament[];
 
   return (
     <div className="max-w-7xl mx-auto">
@@ -52,7 +52,7 @@ export default async function TournamentsPage() {
             <Target className="w-8 h-8 text-green-500 mr-3" />
             <div>              <p className="text-sm font-medium text-gray-600">Active</p>
               <p className="text-2xl font-bold text-gray-900">
-                {tournaments.filter((t: any) => t.status === 'active').length}
+                {tournaments.filter((t: Tournament) => t.status === 'active').length}
               </p>
             </div>
           </div>
@@ -63,7 +63,7 @@ export default async function TournamentsPage() {
             <Users className="w-8 h-8 text-blue-500 mr-3" />
             <div>              <p className="text-sm font-medium text-gray-600">Completed</p>
               <p className="text-2xl font-bold text-gray-900">
-                {tournaments.filter((t: any) => t.status === 'finished').length}
+                {tournaments.filter((t: Tournament) => t.status === 'finished').length}
               </p>
             </div>
           </div>
@@ -74,7 +74,7 @@ export default async function TournamentsPage() {
             <Target className="w-8 h-8 text-purple-500 mr-3" />
             <div>              <p className="text-sm font-medium text-gray-600">Total Matches</p>
               <p className="text-2xl font-bold text-gray-900">
-                {tournaments.reduce((sum: number, t: any) => sum + (t.match_count || 0), 0)}
+                {tournaments.reduce((sum: number, t: Tournament) => sum + (t.match_count || 0), 0)}
               </p>
             </div>
           </div>

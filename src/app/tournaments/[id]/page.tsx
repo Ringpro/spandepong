@@ -1,13 +1,12 @@
-import { Suspense } from 'react';
 import Link from 'next/link';
 import { getTournament, getPlayers, getTournamentLeaderboard } from '@/lib/database';
 import type { Tournament, Player } from '@/lib/types';
 import TournamentClient from './TournamentClient';
 
 interface PageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 export default async function TournamentDetailPage({ params }: PageProps) {
@@ -29,13 +28,11 @@ export default async function TournamentDetailPage({ params }: PageProps) {
           </Link>
         </div>
       );
-    }
-
-    return (
+    }    return (
       <TournamentClient 
         tournament={tournament as Tournament}
-        allPlayers={allPlayers}
-        leaderboard={leaderboard}
+        allPlayers={allPlayers as Player[]}
+        leaderboard={leaderboard as Player[]}
         tournamentId={tournamentId}
       />
     );

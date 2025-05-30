@@ -37,12 +37,11 @@ export async function createRoundWithMatchesAction(
   tournamentId: string, 
   roundNumber: number, 
   teamPairs?: { team1: [string, string]; team2: [string, string]; }[]
-) {
-  // If no team pairs provided, generate them using solo shuffle algorithm
+) {  // If no team pairs provided, generate them using solo shuffle algorithm
   if (!teamPairs || teamPairs.length === 0) {
-    const tournament = await db.getTournament(tournamentId) as any;
+    const tournament = await db.getTournament(tournamentId) as { players?: { id: string }[] };
     if (tournament && tournament.players) {
-      const playerIds = tournament.players.map((p: any) => p.id);
+      const playerIds = tournament.players.map((p: { id: string }) => p.id);
       teamPairs = db.generateSoloShuffleTeams(playerIds);
     }
   }
