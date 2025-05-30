@@ -154,6 +154,32 @@ EDGEDB_DSN=your-edgedb-cloud-connection-string
 - Mobile-friendly scoring interface
 - Real-time match tracking
 
+## 🚀 Production Deployment
+
+### Quick Deploy to Vercel + EdgeDB Cloud
+
+1. **EdgeDB Cloud Setup**:
+   ```bash
+   # Login to EdgeDB Cloud
+   edgedb cloud login
+   
+   # Create cloud instance at https://cloud.edgedb.com/
+   # Copy your connection string
+   ```
+
+2. **Deploy Schema**:
+   ```powershell
+   .\scripts\deploy-to-cloud.ps1 "YOUR_EDGEDB_CLOUD_CONNECTION_STRING"
+   ```
+
+3. **Configure Vercel**:
+   - Add `EDGEDB_DSN` environment variable with your cloud connection string
+   - Redeploy your application
+
+📋 **See [PRODUCTION-CHECKLIST.md](./PRODUCTION-CHECKLIST.md) for detailed deployment steps**
+
+📖 **See [DEPLOYMENT.md](./DEPLOYMENT.md) for comprehensive deployment guide**
+
 ## License
 
 MIT License - see LICENSE file for details
