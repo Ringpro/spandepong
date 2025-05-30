@@ -4,7 +4,8 @@ import { formatDate } from '@/lib/utils';
 import { Plus, Trophy, Users, Target, ArrowLeft } from 'lucide-react';
 import type { Tournament } from '@/lib/types';
 
-export const dynamic = 'force-dynamic';
+// Allow static generation once database is configured
+// During build without database, this will gracefully fallback to empty data
 
 export default async function TournamentsPage() {
   let tournaments: Tournament[] = [];

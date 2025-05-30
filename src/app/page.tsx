@@ -4,8 +4,8 @@ import { formatDate } from '@/lib/utils';
 import { Plus, Trophy, Users, Target } from 'lucide-react';
 import type { Tournament } from '@/lib/types';
 
-export const dynamic = 'force-dynamic';
-
+// Allow static generation once database is configured
+// During build without database, this will gracefully fallback to empty data
 export default async function HomePage() {
   let tournaments: Tournament[] = [];
   
@@ -13,7 +13,7 @@ export default async function HomePage() {
     tournaments = await getTournamentsAction();
   } catch {
     // Handle case where database is not available (e.g., during build)
-    console.log('Database not available during build, using empty tournaments list');
+    console.log('Database not available, using empty tournaments list');
   }
 
   return (
