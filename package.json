@@ -10,6 +10,7 @@
     "edgedb:setup": "edgedb project init --non-interactive && edgedb migration create --non-interactive && edgedb migrate",
     "edgedb:migrate": "edgedb migration create --non-interactive && edgedb migrate",
     "edgedb:reset": "edgedb database wipe --non-interactive && edgedb migrate",
+    "edgedb:verify": "node scripts/verify-cloud-connection.js",
     "generate": "npx @edgedb/generate edgeql-js"
   },
   "dependencies": {
