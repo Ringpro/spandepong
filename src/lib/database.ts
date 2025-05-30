@@ -1,6 +1,16 @@
 import { client } from './edgedb';
 import type { Tournament, Player } from './types';
 
+// Helper function to handle database operations safely
+async function safeQuery<T>(queryFn: () => Promise<T>, fallback: T): Promise<T> {
+  try {
+    return await queryFn();
+  } catch (error) {
+    console.warn('Database query failed:', error);
+    return fallback;
+  }
+}
+
 // Player operations
 export async function createPlayer(name: string, email?: string) {
   return await client.query(`
@@ -12,14 +22,17 @@ export async function createPlayer(name: string, email?: string) {
 }
 
 export async function getPlayers(): Promise<Player[]> {
-  return await client.query(`
-    select Player {
-      id,
-      name,
-      email,
-      created_at
-    } order by .name
-  `);
+  return await safeQuery(
+    () => client.query(`
+      select Player {
+        id,
+        name,
+        email,
+        created_at
+      } order by .name
+    `),
+    [] // Return empty array if database is not available
+  );
 }
 
 export async function getPlayer(id: string) {
@@ -51,19 +64,22 @@ export async function createTournament(
 }
 
 export async function getTournaments(): Promise<Tournament[]> {
-  return await client.query(`
-    select Tournament {
-      id,
-      name,
-      description,
-      status,
-      created_at,
-      max_players,
-      player_count := count(.<tournament[is TournamentRegistration]),
-      round_count := count(.<tournament[is Round]),
-      match_count := count(.<tournament[is GameMatch])
-    } order by .created_at desc
-  `);
+  return await safeQuery(
+    () => client.query(`
+      select Tournament {
+        id,
+        name,
+        description,
+        status,
+        created_at,
+        max_players,
+        player_count := count(.<tournament[is TournamentRegistration]),
+        round_count := count(.<tournament[is Round]),
+        match_count := count(.<tournament[is GameMatch])
+      } order by .created_at desc
+    `),
+    [] // Return empty array if database is not available
+  );
 }
 
 export async function getTournament(id: string) {

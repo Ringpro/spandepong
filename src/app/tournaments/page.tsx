@@ -4,8 +4,17 @@ import { formatDate } from '@/lib/utils';
 import { Plus, Trophy, Users, Target, ArrowLeft } from 'lucide-react';
 import type { Tournament } from '@/lib/types';
 
+export const dynamic = 'force-dynamic';
+
 export default async function TournamentsPage() {
-  const tournaments = await getTournamentsAction() as Tournament[];
+  let tournaments: Tournament[] = [];
+  
+  try {
+    tournaments = await getTournamentsAction() as Tournament[];
+  } catch {
+    // Handle case where database is not available (e.g., during build)
+    console.log('Database not available during build, using empty tournaments list');
+  }
 
   return (
     <div className="max-w-7xl mx-auto">
