@@ -40,26 +40,25 @@ export default function NewTournamentPage() {
     }));
   };
 
-  return (
-    <div className="max-w-2xl mx-auto">
+  return (    <div className="max-w-2xl mx-auto">
       <div className="mb-8">
         <Link
           href="/"
-          className="inline-flex items-center text-blue-600 hover:text-blue-800 mb-4"
+          className="inline-flex items-center text-primary hover:opacity-80 mb-4"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
           Back to Home
         </Link>
-        <h1 className="text-3xl font-bold text-gray-900">Create New Tournament</h1>
-        <p className="text-gray-600 mt-2">
+        <h1 className="text-3xl font-bold">Create New Tournament</h1>
+        <p className="text-muted mt-2">
           Set up a new Spandepong tournament with solo shuffle format
         </p>
       </div>
 
-      <div className="bg-white shadow rounded-lg p-6">
+      <div className="card shadow rounded-lg p-6">
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="name" className="block text-sm font-medium mb-2">
               Tournament Name *
             </label>
             <input
@@ -69,13 +68,13 @@ export default function NewTournamentPage() {
               required
               value={formData.name}
               onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="input w-full px-3 py-2 rounded-md focus:outline-none focus:ring-2"
               placeholder="Enter tournament name"
             />
           </div>
 
           <div>
-            <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="description" className="block text-sm font-medium mb-2">
               Description
             </label>
             <textarea
@@ -84,12 +83,14 @@ export default function NewTournamentPage() {
               rows={3}
               value={formData.description}
               onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="input w-full px-3 py-2 rounded-md focus:outline-none focus:ring-2"
               placeholder="Optional tournament description"
             />
-          </div>          <div className="grid grid-cols-1 md:grid-cols-1 gap-6">
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-1 gap-6">
             <div>
-              <label htmlFor="maxPlayers" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="maxPlayers" className="block text-sm font-medium mb-2">
                 Maximum Players
               </label>
               <input
@@ -101,15 +102,15 @@ export default function NewTournamentPage() {
                 step={2}
                 value={formData.maxPlayers}
                 onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="input w-full px-3 py-2 rounded-md focus:outline-none focus:ring-2"
               />
-              <p className="text-sm text-gray-500 mt-1">Must be an even number (4-32)</p>
+              <p className="text-sm text-muted mt-1">Must be an even number (4-32)</p>
             </div>
           </div>
 
-          <div className="bg-blue-50 p-4 rounded-md">
-            <h3 className="text-sm font-medium text-blue-900 mb-2">Solo Shuffle Format</h3>
-            <p className="text-sm text-blue-800">
+          <div className="bg-primary/10 p-4 rounded-md">
+            <h3 className="text-sm font-medium text-primary mb-2">Solo Shuffle Format</h3>
+            <p className="text-sm text-muted">
               In this format, teams are randomly shuffled each round to ensure fair competition 
               and find the best individual player. Each player will play with different teammates 
               throughout the tournament.
@@ -120,7 +121,7 @@ export default function NewTournamentPage() {
             <button
               type="submit"
               disabled={isLoading || !formData.name.trim()}
-              className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+              className="flex-1 btn-primary py-2 px-4 rounded-md hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
             >
               {isLoading ? (
                 'Creating...'
@@ -133,7 +134,7 @@ export default function NewTournamentPage() {
             </button>
             <Link
               href="/"
-              className="px-6 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 flex items-center justify-center"
+              className="px-6 py-2 btn-secondary rounded-md hover:opacity-90 flex items-center justify-center"
             >
               Cancel
             </Link>
