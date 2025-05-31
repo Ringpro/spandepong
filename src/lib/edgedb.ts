@@ -1,6 +1,17 @@
 import { createClient, createHttpClient, type Client } from 'edgedb';
 import { edgeDBConfig } from './config';
 
+// Type definitions for EdgeDB client configuration
+interface EdgeDBClientConfig {
+  secretKey?: string;
+  instance?: string;
+  dsn?: string;
+  concurrency?: number;
+  tlsSecurity?: 'strict' | 'insecure' | 'default';
+  waitUntilAvailable?: number;
+  connectTimeout?: number;
+}
+
 // Create client with fallback handling for build environments and Vercel
 function createEdgeDBClient(): Client {
   if (typeof window !== 'undefined') {
@@ -26,9 +37,8 @@ function createEdgeDBClient(): Client {
       console.log('🔑 Using EdgeDB Cloud secret key authentication');
       console.log('Secret key prefix:', edgeDBConfig.secretKey.substring(0, 10) + '...');
       console.log('Instance:', edgeDBConfig.instance);
-      
-      // Create configuration with ONLY secret key auth (avoids env var conflicts)
-      const config: any = {
+        // Create configuration with ONLY secret key auth (avoids env var conflicts)
+      const config: EdgeDBClientConfig = {
         secretKey: edgeDBConfig.secretKey,
         instance: edgeDBConfig.instance || 'Ringpro/spandepong-prod'
       };
@@ -62,9 +72,8 @@ function createEdgeDBClient(): Client {
     } else if (edgeDBConfig.dsn) {
       console.log('🔗 Using DSN-based authentication');
       console.log('DSN prefix:', edgeDBConfig.dsn.substring(0, 20) + '...');
-      
-      // Create configuration with ONLY DSN auth
-      const config: any = {
+        // Create configuration with ONLY DSN auth
+      const config: EdgeDBClientConfig = {
         dsn: edgeDBConfig.dsn
       };
       
