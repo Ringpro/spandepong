@@ -39,8 +39,23 @@
 3. Click the **Settings** tab
 4. Click **Environment Variables** in the left sidebar
 
-### Step 2: Add EdgeDB Connection - Option A (Recommended for Development)
-Click **Add Variable** and enter:
+### Step 2: Add EdgeDB Secret Key Authentication (Recommended)
+Click **Add Variable** and enter these TWO variables:
+
+**Variable 1:**
+```
+Name: EDGEDB_SECRET_KEY
+Value: nbwt1_eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3MzU2NzA4MDcsImV4cCI6MTc2NzIwNjgwNywiaXNzIjoiZWRnZWRiIiwiYXVkIjoiZWRnZWRiLmNsb3VkIiwic3ViIjoibmJ3dDFfZXlKaGJHY2lPaVZUTWpVMkxDSjBlWEFpT2tGQ1ZEZzBkUXBxV1c5M01sQlhTM1Z4YVdkeVdqVTJWbFZ2V2paWGFVUnVkVTlQTldkTmJ6WjNZa2h1TDJVNFJWaHJhWGd2YldKNGRrSkVhSGxrWkVwdU1GcDBaak5QVmpacWNISnZlRWhZVG5Sb1R6ZEdhWE0xYzFCRWVVSXdaMWRTVDFaQlIzaE9hME5xZUhOblkyRnNUR3hoTjA1aGExUkJZM2czVVE5b1dEWjFOMVk0VG5ReE0yaDNZbEpTUWxkR05XNXVXSE0xWnpOaWNrVTJNVEYyWldGbVVUbFFZVGRpVjFsQ2VXZFBOM3BpWVU5dVJsTnVVbVl5Ym5SNWRXdENkekEzUkRKNk1VNUZNblJsVW1KaVEwaGljMWxtTkdJMVlVMHRlV0kyYjNsdE5rVk5SVzVOY0VaaFNISmtaRFJ5VkRCMGEybG1UMGRKV2xaSmFUSTRaR0p2WW5Sb2VHOTFXVkIyYUZocGRVOXFVRGhxUlVwVldVWmpaekJJZFRkcGJXWnlTbWRHTlRCQmMzSmhVSGhVY21GUVREQnljR1F6VTJaS1pGQjRlQT09In0.bNVOCN3QRyMglG6mGIj3RjW8hK5V_m8cY3fGUPJYgAY
+```
+
+**Variable 2:**
+```
+Name: EDGEDB_INSTANCE
+Value: Ringpro/spandepong-prod
+```
+
+### Alternative: DSN with Credentials (If you have them)
+If you have EdgeDB credentials, you can use a single DSN variable instead:
 
 **Variable Name:**
 ```
@@ -49,25 +64,8 @@ EDGEDB_DSN
 
 **Variable Value:**
 ```
-edgedb://edgedb@spandepong-prod--ringpro.c-50.i.aws.edgedb.cloud:5656/edgedb
+edgedb://username:password@spandepong-prod--ringpro.c-50.i.aws.edgedb.cloud:5656/edgedb
 ```
-
-### Step 2: Add EdgeDB Connection - Option B (For Production with Secret Key)
-If you prefer to use secret key authentication, add TWO variables:
-
-**Variable 1:**
-```
-Name: EDGEDB_DSN
-Value: edgedb://spandepong-prod--ringpro.c-50.i.aws.edgedb.cloud:5656/edgedb
-```
-
-**Variable 2:**
-```
-Name: EDGEDB_SECRET_KEY
-Value: [Your EdgeDB Cloud Secret Key]
-```
-
-> **Note**: To generate a new secret key, run: `edgedb cloud secretkey create`
 
 **Environments:** Select ALL three checkboxes for both variables:
 - ✅ Production

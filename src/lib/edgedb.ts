@@ -51,16 +51,13 @@ function createEdgeDBClient(): Client {
           console.warn('⚠️ No instance specified for secret key auth, using default');
           clientConfig.instance = 'Ringpro/spandepong-prod';
         }
-        
-        console.log('Final client config:', {
+          console.log('Final client config:', {
           hasSecretKey: !!clientConfig.secretKey,
           instance: clientConfig.instance,
           isProduction: edgeDBConfig.isProduction
         });
         
-        // Create client and test it immediately
-        const testClient = createClient(clientConfig);
-        console.log('✅ Secret key client created successfully');
+        console.log('✅ Secret key client config prepared successfully');
         
       } catch (secretKeyError) {
         console.warn('❌ Secret key authentication failed:', secretKeyError);

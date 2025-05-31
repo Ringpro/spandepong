@@ -53,13 +53,9 @@ if (process.env.NODE_ENV === 'development' || process.env.DEBUG_EDGEDB || proces
     secretKeyPrefix: edgeDBSecretKey ? edgeDBSecretKey.substring(0, 10) + '...' : 'none',
     instance: edgeDBInstance
   });
-  
-  // List all environment variables that might be EdgeDB related
+    // List all environment variables that might be EdgeDB related
   const edgedbEnvVars = Object.keys(process.env).filter(key => 
     key.includes('EDGEDB') || key.includes('DATABASE')
   );
   console.log('🌍 EdgeDB-related environment variables:', edgedbEnvVars);
-}
-    secretKeyPrefix: edgeDBSecretKey ? edgeDBSecretKey.substring(0, 10) + '...' : 'none'
-  });
 }
