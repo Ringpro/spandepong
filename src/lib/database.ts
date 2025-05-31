@@ -324,22 +324,38 @@ export async function getTournamentLeaderboard(tournamentId: string) {
   }, []);
 }
 
-// Solo shuffle algorithm
+// Solo shuffle algorithm - supports various player counts
 export function generateSoloShuffleTeams(playerIds: string[]): Array<{ team1: [string, string], team2: [string, string] }> {
-  if (playerIds.length < 4 || playerIds.length % 4 !== 0) {
-    throw new Error('Solo shuffle requires a multiple of 4 players (minimum 4)');
+  if (playerIds.length < 4) {
+    throw new Error('Solo shuffle requires at least 4 players');
+  }
+
+  if (playerIds.length % 2 !== 0) {
+    throw new Error('Solo shuffle requires an even number of players');
   }
 
   // Shuffle the players randomly
   const shuffled = [...playerIds].sort(() => Math.random() - 0.5);
   const teams = [];
 
-  // Create pairs (teams of 2) and then match them up
-  for (let i = 0; i < shuffled.length; i += 4) {
+  if (playerIds.length % 4 === 0) {
+    // For multiples of 4: create simultaneous matches (4, 8, 12 players)
+    for (let i = 0; i < shuffled.length; i += 4) {
+      teams.push({
+        team1: [shuffled[i], shuffled[i + 1]] as [string, string],
+        team2: [shuffled[i + 2], shuffled[i + 3]] as [string, string]
+      });
+    }
+  } else {
+    // For 6, 10, 14 players etc: create one match per round, rotate players
+    // Take first 4 players for this round
     teams.push({
-      team1: [shuffled[i], shuffled[i + 1]] as [string, string],
-      team2: [shuffled[i + 2], shuffled[i + 3]] as [string, string]
+      team1: [shuffled[0], shuffled[1]] as [string, string],
+      team2: [shuffled[2], shuffled[3]] as [string, string]
     });
+    
+    // Note: In a 6-player tournament, the remaining 2 players will rotate in future rounds
+    // This ensures everyone gets to play with different partners across multiple rounds
   }
 
   return teams;
