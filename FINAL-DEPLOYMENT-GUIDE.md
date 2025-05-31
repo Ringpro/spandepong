@@ -54,8 +54,10 @@ Name: EDGEDB_INSTANCE
 Value: Ringpro/spandepong-prod
 ```
 
-### Alternative: DSN with Credentials (If you have them)
-If you have EdgeDB credentials, you can use a single DSN variable instead:
+⚠️ **IMPORTANT**: Do NOT set `EDGEDB_DSN` if you're using secret key authentication to avoid conflicts.
+
+### Alternative: DSN Authentication Only (If needed)
+If secret key authentication doesn't work, you can use DSN instead:
 
 **Variable Name:**
 ```
@@ -66,6 +68,8 @@ EDGEDB_DSN
 ```
 edgedb://username:password@spandepong-prod--ringpro.c-50.i.aws.edgedb.cloud:5656/edgedb
 ```
+
+⚠️ **IMPORTANT**: Do NOT set both `EDGEDB_SECRET_KEY` and `EDGEDB_DSN` at the same time.
 
 **Environments:** Select ALL three checkboxes for both variables:
 - ✅ Production

@@ -1,3 +1,4 @@
+// filepath: c:\Code\Spandepong\src\lib\edgedb.ts
 import { createClient, createHttpClient, type Client } from 'edgedb';
 import { edgeDBConfig } from './config';
 
@@ -10,17 +11,19 @@ function createEdgeDBClient(): Client {
     }
     return createHttpClient();
   }
-    // Server environment
+  
+  // Server environment
   if (!edgeDBConfig.shouldConnect) {
     console.log('EdgeDB connection skipped during build phase');
     return createMockClient();
   }
 
-  if (!edgeDBConfig.secretKey && !edgeDBConfig.dsn) {
-    console.warn('No EdgeDB connection configuration found (no secret key or DSN), using mock client');
+  if (!edgeDBConfig.dsn && !edgeDBConfig.secretKey) {
+    console.warn('No EdgeDB connection configuration found, using mock client');
     return createMockClient();
   }
-    try {
+  
+  try {
     // Priority: Secret key authentication over DSN to avoid conflicts
     if (edgeDBConfig.secretKey) {
       console.log('🔑 Using EdgeDB Cloud secret key authentication');
@@ -28,55 +31,39 @@ function createEdgeDBClient(): Client {
       console.log('Instance:', edgeDBConfig.instance);
       
       // Create configuration with ONLY secret key auth (avoids env var conflicts)
-      const config: any = {
+      const config = {
         secretKey: edgeDBConfig.secretKey,
         instance: edgeDBConfig.instance || 'Ringpro/spandepong-prod'
       };
       
-      // Add production-specific settings for Vercel and EdgeDB Cloud
-      if (edgeDBConfig.isProduction || process.env.VERCEL) {
+      // Add production-specific settings
+      if (edgeDBConfig.isProduction) {
         Object.assign(config, {
           concurrency: 1,
-          tlsSecurity: 'strict' as const,
-          // Additional Vercel-specific optimizations
-          waitUntilAvailable: 30000, // 30 second timeout
-          connectTimeout: 10000,     // 10 second connect timeout
+          tlsSecurity: 'strict' as const
         });
-        console.log('🔧 Added production/Vercel config: concurrency=1, tlsSecurity=strict, timeouts configured');
+        console.log('🔧 Added production config: concurrency=1, tlsSecurity=strict');
       }
       
       console.log('🚀 Creating EdgeDB client with secret key');
-      const client = createClient(config);
-      
-      // Test the connection immediately to verify it works
-      if (edgeDBConfig.isProduction || process.env.VERCEL) {
-        console.log('🧪 Testing EdgeDB connection...');
-        // Don't await this in production to avoid blocking, but log results
-        client.query('SELECT 1')
-          .then(() => console.log('✅ EdgeDB connection test successful'))
-          .catch((err) => console.error('❌ EdgeDB connection test failed:', err.message));
-      }
-      
-      return client;
+      return createClient(config);
       
     } else if (edgeDBConfig.dsn) {
       console.log('🔗 Using DSN-based authentication');
       console.log('DSN prefix:', edgeDBConfig.dsn.substring(0, 20) + '...');
       
       // Create configuration with ONLY DSN auth
-      const config: any = {
+      const config = {
         dsn: edgeDBConfig.dsn
       };
       
       // Add production-specific settings  
-      if (edgeDBConfig.isProduction || process.env.VERCEL) {
+      if (edgeDBConfig.isProduction) {
         Object.assign(config, {
           concurrency: 1,
-          tlsSecurity: 'strict' as const,
-          waitUntilAvailable: 30000,
-          connectTimeout: 10000,
+          tlsSecurity: 'strict' as const
         });
-        console.log('🔧 Added production/Vercel config: concurrency=1, tlsSecurity=strict, timeouts configured');
+        console.log('🔧 Added production config: concurrency=1, tlsSecurity=strict');
       }
       
       console.log('🚀 Creating EdgeDB client with DSN');

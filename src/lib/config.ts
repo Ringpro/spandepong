@@ -23,7 +23,9 @@ export const hasEdgeDBSecretKey = Boolean(edgeDBSecretKey);
 
 // During build time, we might not have a database connection
 // This is normal and expected behavior
-export const shouldConnectToDatabase = hasEdgeDBConnection && !isBuild;
+// Allow connection if we have EITHER a DSN OR a secret key
+// In production/runtime, always connect if we have auth credentials
+export const shouldConnectToDatabase = (hasEdgeDBConnection || hasEdgeDBSecretKey) && (!isBuild || isProduction);
 
 export const edgeDBConfig = {
   dsn: edgeDBDSN,
@@ -34,7 +36,9 @@ export const edgeDBConfig = {
   isProduction,
   isBuild,
   hasConnection: hasEdgeDBConnection,
-  hasSecretKey: hasEdgeDBSecretKey
+  hasSecretKey: hasEdgeDBSecretKey,
+  // Helper to check if we have any auth method
+  hasAnyAuth: hasEdgeDBConnection || hasEdgeDBSecretKey
 };
 
 // Log configuration for debugging (in development or when debugging)
@@ -42,6 +46,7 @@ if (process.env.NODE_ENV === 'development' || process.env.DEBUG_EDGEDB || proces
   console.log('🔧 EdgeDB Config Debug:', {
     hasConnection: hasEdgeDBConnection,
     hasSecretKey: hasEdgeDBSecretKey,
+    hasAnyAuth: hasEdgeDBConnection || hasEdgeDBSecretKey,
     shouldConnect: shouldConnectToDatabase,
     environment: process.env.NODE_ENV,
     phase: process.env.NEXT_PHASE,
