@@ -11,6 +11,7 @@
     "edgedb:migrate": "edgedb migration create --non-interactive && edgedb migrate",
     "edgedb:reset": "edgedb database wipe --non-interactive && edgedb migrate",
     "edgedb:verify": "node scripts/verify-cloud-connection.js",
+    "edgedb:test-vercel": "node scripts/test-vercel-connection.js",
     "generate": "npx @edgedb/generate edgeql-js"
   },
   "dependencies": {

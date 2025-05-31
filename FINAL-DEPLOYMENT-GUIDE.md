@@ -16,7 +16,7 @@
 3. Click the **Settings** tab
 4. Click **Environment Variables** in the left sidebar
 
-### Step 2: Add EdgeDB Connection
+### Step 2: Add EdgeDB Connection - Option A (Recommended for Development)
 Click **Add Variable** and enter:
 
 **Variable Name:**
@@ -29,10 +29,32 @@ EDGEDB_DSN
 edgedb://edgedb@spandepong-prod--ringpro.c-50.i.aws.edgedb.cloud:5656/edgedb
 ```
 
-**Environments:** Select ALL three checkboxes:
+### Step 2: Add EdgeDB Connection - Option B (For Production with Secret Key)
+If you prefer to use secret key authentication, add TWO variables:
+
+**Variable 1:**
+```
+Name: EDGEDB_DSN
+Value: edgedb://spandepong-prod--ringpro.c-50.i.aws.edgedb.cloud:5656/edgedb
+```
+
+**Variable 2:**
+```
+Name: EDGEDB_SECRET_KEY
+Value: [Your EdgeDB Cloud Secret Key]
+```
+
+> **Note**: To generate a new secret key, run: `edgedb cloud secretkey create`
+
+**Environments:** Select ALL three checkboxes for both variables:
 - ✅ Production
 - ✅ Preview  
 - ✅ Development
+
+### Important Notes:
+- ⚠️ **Do NOT use** the `EDGE_CONFIG` variable that Vercel creates automatically - that's for Vercel's Edge Config service, not EdgeDB
+- ✅ **Use** `EDGEDB_DSN` specifically for the EdgeDB connection string
+- 🔧 Our application supports multiple DSN variable names: `EDGEDB_DSN`, `EDGEDB_URL`, `DATABASE_URL`, or `EDGEDB_CONNECTION_STRING`
 
 ### Step 3: Save and Deploy
 1. Click **Save** button
