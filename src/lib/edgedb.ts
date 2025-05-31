@@ -17,27 +17,72 @@ function createEdgeDBClient(): Client {
     return createMockClient();
   }
 
-  if (!edgeDBConfig.dsn) {
-    console.warn('No EdgeDB DSN found, using mock client');
+  if (!edgeDBConfig.dsn && !edgeDBConfig.secretKey) {
+    console.warn('No EdgeDB connection configuration found, using mock client');
     return createMockClient();
   }
-  try {    interface ClientConfig {
+  
+  try {
+    interface ClientConfig {
       dsn?: string;
       secretKey?: string;
+      instance?: string;
       concurrency?: number;
       tlsSecurity?: 'strict' | 'insecure' | 'no_host_verification' | 'default';
     }
     
     const clientConfig: ClientConfig = {};
-    
-    if (edgeDBConfig.secretKey) {
+      if (edgeDBConfig.secretKey) {
       // For EdgeDB Cloud with secret key authentication
-      console.log('Using EdgeDB Cloud secret key authentication');
-      clientConfig.secretKey = edgeDBConfig.secretKey;
+      console.log('🔑 Using EdgeDB Cloud secret key authentication');
+      console.log('Secret key prefix:', edgeDBConfig.secretKey.substring(0, 10) + '...');
+      console.log('Secret key length:', edgeDBConfig.secretKey.length);
+      console.log('Instance:', edgeDBConfig.instance);
+      
+      // Try secret key authentication first
+      try {
+        // According to EdgeDB docs, for secret key auth we need both secretKey and instance
+        clientConfig.secretKey = edgeDBConfig.secretKey;
+        
+        // Instance is required for secret key authentication
+        if (edgeDBConfig.instance) {
+          clientConfig.instance = edgeDBConfig.instance;
+        } else {
+          console.warn('⚠️ No instance specified for secret key auth, using default');
+          clientConfig.instance = 'Ringpro/spandepong-prod';
+        }
+        
+        console.log('Final client config:', {
+          hasSecretKey: !!clientConfig.secretKey,
+          instance: clientConfig.instance,
+          isProduction: edgeDBConfig.isProduction
+        });
+        
+        // Create client and test it immediately
+        const testClient = createClient(clientConfig);
+        console.log('✅ Secret key client created successfully');
+        
+      } catch (secretKeyError) {
+        console.warn('❌ Secret key authentication failed:', secretKeyError);
+        
+        // Fallback to DSN if available
+        if (edgeDBConfig.dsn) {
+          console.log('🔄 Falling back to DSN authentication');
+          // Clear secret key config
+          delete clientConfig.secretKey;
+          delete clientConfig.instance;
+          clientConfig.dsn = edgeDBConfig.dsn;
+        } else {
+          throw secretKeyError;
+        }
+      }
+      
     } else if (edgeDBConfig.dsn) {
       // For DSN-based authentication (local or cloud with credentials in DSN)
-      console.log('Using DSN-based authentication');
+      console.log('🔗 Using DSN-based authentication');
+      console.log('DSN:', edgeDBConfig.dsn.replace(/\/\/.*@/, '//***@'));
       clientConfig.dsn = edgeDBConfig.dsn;
+      
     } else {
       console.warn('No valid EdgeDB configuration found');
       return createMockClient();
@@ -47,11 +92,14 @@ function createEdgeDBClient(): Client {
     if (edgeDBConfig.isProduction) {
       clientConfig.concurrency = 1; // Limit connections in serverless
       clientConfig.tlsSecurity = 'strict'; // Ensure secure connections
+      console.log('🔧 Added production config: concurrency=1, tlsSecurity=strict');
     }
     
+    console.log('🚀 Creating EdgeDB client with config:', Object.keys(clientConfig));
     return createClient(clientConfig);
+    
   } catch (error) {
-    console.warn('EdgeDB client creation failed, using mock client:', error);
+    console.warn('❌ EdgeDB client creation failed, using mock client:', error);
     return createMockClient();
   }
 }

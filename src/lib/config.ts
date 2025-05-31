@@ -15,6 +15,9 @@ export const edgeDBDSN = process.env.EDGEDB_DSN ||
 // EdgeDB Cloud secret key for production authentication
 export const edgeDBSecretKey = process.env.EDGEDB_SECRET_KEY;
 
+// EdgeDB instance name for secret key authentication
+export const edgeDBInstance = process.env.EDGEDB_INSTANCE || 'Ringpro/spandepong-prod';
+
 export const hasEdgeDBConnection = Boolean(edgeDBDSN);
 export const hasEdgeDBSecretKey = Boolean(edgeDBSecretKey);
 
@@ -25,6 +28,7 @@ export const shouldConnectToDatabase = hasEdgeDBConnection && !isBuild;
 export const edgeDBConfig = {
   dsn: edgeDBDSN,
   secretKey: edgeDBSecretKey,
+  instance: edgeDBInstance,
   shouldConnect: shouldConnectToDatabase,
   isDevelopment,
   isProduction,
@@ -33,14 +37,29 @@ export const edgeDBConfig = {
   hasSecretKey: hasEdgeDBSecretKey
 };
 
-// Log configuration for debugging (only in development)
-if (process.env.NODE_ENV === 'development') {
-  console.log('EdgeDB Config:', {
+// Log configuration for debugging (in development or when debugging)
+if (process.env.NODE_ENV === 'development' || process.env.DEBUG_EDGEDB || process.env.VERCEL) {
+  console.log('🔧 EdgeDB Config Debug:', {
     hasConnection: hasEdgeDBConnection,
     hasSecretKey: hasEdgeDBSecretKey,
     shouldConnect: shouldConnectToDatabase,
     environment: process.env.NODE_ENV,
     phase: process.env.NEXT_PHASE,
-    dsnSource: edgeDBDSN ? 'found' : 'missing'
+    isVercel: !!process.env.VERCEL,
+    dsnSource: edgeDBDSN ? 'found' : 'missing',
+    secretKeySource: edgeDBSecretKey ? 'found' : 'missing',
+    // Show first few characters of credentials for debugging (never show full values)
+    dsnPrefix: edgeDBDSN ? edgeDBDSN.substring(0, 20) + '...' : 'none',
+    secretKeyPrefix: edgeDBSecretKey ? edgeDBSecretKey.substring(0, 10) + '...' : 'none',
+    instance: edgeDBInstance
+  });
+  
+  // List all environment variables that might be EdgeDB related
+  const edgedbEnvVars = Object.keys(process.env).filter(key => 
+    key.includes('EDGEDB') || key.includes('DATABASE')
+  );
+  console.log('🌍 EdgeDB-related environment variables:', edgedbEnvVars);
+}
+    secretKeyPrefix: edgeDBSecretKey ? edgeDBSecretKey.substring(0, 10) + '...' : 'none'
   });
 }
